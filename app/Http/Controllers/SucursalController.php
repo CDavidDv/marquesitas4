@@ -73,6 +73,7 @@ class SucursalController extends Controller
             'direccion' => 'required|string|max:255',
             'usuario' => 'sometimes|string|max:255',
             'password' => 'sometimes|string',
+            'email' => 'required|string|max:255',
         ]);
 
         $sucursal->update([
@@ -83,7 +84,7 @@ class SucursalController extends Controller
         if (!empty($validated['usuario'])) {
             $user = $sucursal->user;
             $user->update([
-                'name' => $validated['usuario'],
+                'email' => $validated['email'],
                 'password' => !empty($validated['password']) ? Hash::make($validated['password']) : $user->password,
             ]);
         }
