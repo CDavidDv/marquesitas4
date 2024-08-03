@@ -81,12 +81,14 @@ class SucursalController extends Controller
             'direccion' => $validated['direccion'],
         ]);
 
-        if (!empty($validated['usuario'])) {
+        if (!empty($validated['nombre'])) {
             $user = $sucursal->user;
             $user->update([
+                'name' => $validated['nombre'],
                 'email' => $validated['email'],
                 'password' => !empty($validated['password']) ? Hash::make($validated['password']) : $user->password,
             ]);
+
         }
 
         return redirect()->back()->with('success', 'Sucursal y usuario actualizados con éxito');
