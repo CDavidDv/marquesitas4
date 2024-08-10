@@ -13,6 +13,7 @@ use Illuminate\Foundation\Application;
 use App\Models\BebidasInventario;
 use App\Models\Ingrediente;
 use App\Models\Orden_item;
+use App\Models\Sucursal;
 use Carbon\Carbon;
 
 class OrdenController extends Controller
@@ -50,7 +51,7 @@ class OrdenController extends Controller
         $filter = $request->input('filter');
         $value = $request->input('value');
 
-        $query = Orden::query();
+        $query = Orden::query()->with('marquesitas.ingredientes', 'bebidas');;
 
         switch ($filter) {
             case 'day':
@@ -127,6 +128,7 @@ class OrdenController extends Controller
     {
         $user = $request->user(); // Obtiene el usuario autenticado
         $sucursalId = $user->sucursal_id;
+        $sucursal = Sucursal::find($sucursalId);
 
         $pedidoData = $request->validate([
             'nombre_comprador' => 'required|string',
@@ -203,6 +205,26 @@ class OrdenController extends Controller
             }
         }
 
+        $dataToPrint = [
+            'nombre_comprador' => $pedido->nombre_comprador,
+            'pago' => $pedido->pago,
+            'cambio' => $pedido->cambio,
+            'estado' => $pedido->estado,
+            'metodo' => $pedido->metodo,
+            'total' => $pedido->total,
+            'marquesitas' => $pedidoData['marquesitas'] ?? [],
+            'bebidas' => $pedidoData['bebidas'] ?? [],
+            'categorias' => $pedidoData['categorias'] ?? [],
+            'sucursal' => $sucursal->direccion,
+        ];
+        
+        // Enviar los datos al servidor local en Flutter
+        $client = new \GuzzleHttp\Client();
+        $response = $client->post('http://localhost:8080/print', [
+            'json' => $dataToPrint,
+        ]);
+
+        
         return redirect()->back()->with('success', [
             'message' => 'Pedido guardado con éxito',
             'clearForm' => true,
