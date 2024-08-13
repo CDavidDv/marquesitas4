@@ -204,6 +204,30 @@ class OrdenController extends Controller
                 }
             }
         }
+        
+        return redirect()->back()->with('success', [
+            'message' => 'Pedido guardado con éxito',
+            'clearForm' => true,
+        ]);
+    }
+
+    public function obtenerDatos (Request $request)
+    {
+        $user = $request->user(); 
+        $sucursalId = $user->sucursal_id;
+        $sucursal = Sucursal::find($sucursalId);
+
+        $pedidoData['sucursal_id'] = $sucursalId;
+        
+        $pedido = Orden::create([
+            'nombre_comprador' => $pedidoData['nombre_comprador'],
+            'pago' => $pedidoData['pago'],
+            'cambio' => $pedidoData['cambio'],
+            'estado' => $pedidoData['estado'],
+            'metodo' => $pedidoData['metodo'],
+            'total' => $pedidoData['total'],
+            'sucursal_id' => $sucursalId,
+        ]);
 
         $dataToPrint = [
             'nombre_comprador' => $pedido->nombre_comprador,
@@ -215,7 +239,7 @@ class OrdenController extends Controller
             'marquesitas' => $pedidoData['marquesitas'] ?? [],
             'bebidas' => $pedidoData['bebidas'] ?? [],
             'categorias' => $pedidoData['categorias'] ?? [],
-            'sucursal' => $sucursal->direccion,
+            'sucursal' => $sucursal['direccion'] ?? [],
         ];
         
         // Enviar los datos al servidor local en Flutter
@@ -224,11 +248,14 @@ class OrdenController extends Controller
             'json' => $dataToPrint,
         ]);
 
-        
-        return redirect()->back()->with('success', [
-            'message' => 'Pedido guardado con éxito',
-            'clearForm' => true,
-        ]);
+        if ($response->getStatusCode() == 200) {
+            return redirect()->back()->with('success', [
+                'message' => 'Pedido guardado e impreso con éxito',
+                'clearForm' => true,
+            ]);
+        } else {
+            return redirect()->back()->withErrors(['error' => 'El pedido fue guardado, pero no se pudo imprimir.']);
+        }
     }
 
 

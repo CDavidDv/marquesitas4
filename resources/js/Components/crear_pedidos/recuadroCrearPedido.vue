@@ -22,6 +22,7 @@ const bebidasSelection = ref([]);
 const categoriasSelection = ref({});  // To store selected items for each category
 const sumaTotal = ref(0.0);
 const error = ref(null);
+const asd = ref(null);
 const selection = ref([]);
 const sumaIndividual = ref(40.0);
 const metodoPago = ref('Efectivo');
@@ -214,7 +215,7 @@ const enviarPedido = () => {
         return;
     }
 
-    if (marquesitas.value.length === 0 && bebidasSelection.value.length === 0 && Object.keys(categoriasSelection.value).length === 0 ) {
+    if (marquesitas.value.length === 0 && bebidasSelection.value.length === 0 && Object.keys(categoriasSelection.value).length === 0) {
         error.value = 'Debe agregar al menos una marquesita, bebida o ítem de categoría al pedido.';
         return;
     }
@@ -233,7 +234,10 @@ const enviarPedido = () => {
         cambio: metodoPago.value === 'Efectivo' ? parseFloat(cambio.value) : 0,
         marquesitas: marquesitas.value.map(marquesita => ({
             precio: marquesita.precio,
-            ingredientes: marquesita.ingredientes.map(ingrediente => ingrediente.id),
+            ingredientes: marquesita.ingredientes.map(ingrediente => ({
+                id: ingrediente.id,
+                nombre: ingrediente.nombre // Incluye el nombre del ingrediente
+            })),
             cantidad: marquesita.cantidad
         })),
         bebidas: bebidasSelection.value.map(bebida => ({
@@ -252,12 +256,26 @@ const enviarPedido = () => {
             }))
         })),
     };
-    console.log(pedido)
+
+    
+    axios.post("http://127.0.0.1:8080/print", pedido, {
+        headers: {
+            'Content-Type': 'application/json',
+            'x-requested-with': 'XMLHttpRequest'
+        }
+    }).then(function (response) {
+        console.log(response);
+        console.log("asdasdasdsadaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+        console.log(pedido);
+    })
+    .catch(function (error) {
+        asd.value = error;
+        console.log(error);
+    });
 
     router.post('/ordens', pedido, {
         onSuccess: () => {
             error.value = null;
-
             marquesitas.value = [];
             bebidasSelection.value = [];
             categoriasSelection.value = {};
@@ -269,20 +287,24 @@ const enviarPedido = () => {
             nombreComprador.value = '';
             pago.value = 0;
             cambio.value = 0;
+
         },
         onError: (errors) => {
             console.error('Error al enviar el pedido:', errors);
         }
     });
 };
+
 </script>
 
 
 
 <template>
+    
     <div class="flex flex-col p-4">
         <div class="flex justify-between flex-col sm:flex-row">
             <h1 class="text-2xl uppercase font-bold text-sky-800/90 mb-4">Crear pedido</h1>
+            
             <input
                 class="border border-gray-300 rounded-lg p-1 mb-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 type="text" v-model="nombreComprador" placeholder="Nombre del comprador">
