@@ -169,10 +169,10 @@ class OrdenController extends Controller
                 ]);
 
                 $pedido->marquesitas()->save($marquesita);
-
+                
                 if (isset($marquesitaData['ingredientes'])) {
-                    foreach ($marquesitaData['ingredientes'] as $ingredienteId) {
-                        $marquesita->ingredientes()->attach($ingredienteId);
+                    foreach ($marquesitaData['ingredientes'] as $ingrediente) {
+                        $marquesita->ingredientes()->attach($ingrediente['id']);
                     }
                 }
             }

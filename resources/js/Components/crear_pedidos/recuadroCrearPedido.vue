@@ -89,7 +89,11 @@ const handleAddToSelectionMarquesa = () => {
         existingMarquesita.cantidad++;
     } else {
         marquesitas.value.push({
-            ingredientes: [...selection.value],
+            ingredientes: selection.value.map(ingrediente => ({
+                id: ingrediente.id,
+                nombre: ingrediente.nombre, // Asegúrate de incluir el nombre aquí
+                precio: ingrediente.precio 
+            })),
             precio: sumaIndividual.value,
             cantidad: 1
         });
@@ -99,6 +103,7 @@ const handleAddToSelectionMarquesa = () => {
     selection.value = [];
     sumaIndividual.value = 40.0;
 };
+
 
 const handleRemoveMarquesita = (index) => {
     sumaTotal.value -= marquesitas.value[index].precio * marquesitas.value[index].cantidad;
@@ -233,11 +238,12 @@ const enviarPedido = () => {
         pago: metodoPago.value === 'Efectivo' ? pago.value : 0,
         cambio: metodoPago.value === 'Efectivo' ? parseFloat(cambio.value) : 0,
         marquesitas: marquesitas.value.map(marquesita => ({
-            precio: marquesita.precio,
             ingredientes: marquesita.ingredientes.map(ingrediente => ({
                 id: ingrediente.id,
-                nombre: ingrediente.nombre // Incluye el nombre del ingrediente
+                nombre: ingrediente.nombre,
+                precio: ingrediente.precio 
             })),
+            precio: marquesita.precio,
             cantidad: marquesita.cantidad
         })),
         bebidas: bebidasSelection.value.map(bebida => ({
@@ -256,6 +262,8 @@ const enviarPedido = () => {
             }))
         })),
     };
+
+    console.log(pedido)
 
     
     axios.post("http://127.0.0.1:8080/print", pedido, {
