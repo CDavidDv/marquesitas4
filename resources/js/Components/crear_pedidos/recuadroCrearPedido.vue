@@ -212,8 +212,11 @@ const pedido = ref({
     bebidas: [],
     categorias: [],
     total: 0.0,
-    metodo: String
+    metodo: String,
+    sucursal: String
 });
+
+
 
 const enviarPedido = () => {
     if (pago.value < sumaTotal.value && metodoPago.value === 'Efectivo') {
