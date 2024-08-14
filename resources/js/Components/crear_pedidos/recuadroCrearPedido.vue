@@ -16,7 +16,7 @@ const props = defineProps({
         required: true,
     }
 });
-const  page = usePage().props;
+
 const marquesitas = ref([]);
 const bebidasSelection = ref([]);
 const categoriasSelection = ref({});  // To store selected items for each category
@@ -234,7 +234,9 @@ const enviarPedido = () => {
         return;
     }
 
-    
+    const page = usePage().props;
+
+    console.log(page.direccion)
     
     const pedido = {
         nombre_comprador: nombreComprador.value === '' ? 'Usuario' : nombreComprador.value,
@@ -243,6 +245,7 @@ const enviarPedido = () => {
         total: sumaTotal.value,
         pago: metodoPago.value === 'Efectivo' ? pago.value : 0,
         cambio: metodoPago.value === 'Efectivo' ? parseFloat(cambio.value) : 0,
+        sucursal: page.direccion,
         marquesitas: marquesitas.value.map(marquesita => ({
             ingredientes: marquesita.ingredientes.map(ingrediente => ({
                 id: ingrediente.id,
@@ -267,7 +270,7 @@ const enviarPedido = () => {
                 cantidad: item.cantidad
             }))
         })),
-        sucursal: page.direccion
+        
     };
 
     console.log(pedido)
