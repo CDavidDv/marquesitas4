@@ -16,7 +16,7 @@ const props = defineProps({
         required: true,
     }
 });
-
+const  page = usePage().props;
 const marquesitas = ref([]);
 const bebidasSelection = ref([]);
 const categoriasSelection = ref({});  // To store selected items for each category
@@ -31,6 +31,7 @@ const searchQueryIngredients = ref('');
 const searchQueryBebidas = ref('');
 const pago = ref(0);
 const cambio = ref(0);
+
 
 const computedCambio = computed(() => {
     return pago.value > sumaTotal.value ? (pago.value - sumaTotal.value).toFixed(2) : 0;
@@ -230,6 +231,8 @@ const enviarPedido = () => {
         return;
     }
 
+    
+    
     const pedido = {
         nombre_comprador: nombreComprador.value === '' ? 'Usuario' : nombreComprador.value,
         estado: 'Pagado',
@@ -261,6 +264,7 @@ const enviarPedido = () => {
                 cantidad: item.cantidad
             }))
         })),
+        sucursal: page.direccion
     };
 
     console.log(pedido)

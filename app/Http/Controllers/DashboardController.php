@@ -116,6 +116,7 @@ class DashboardController extends Controller
             'ingredientes' => $ingredientes,
             'ordens' => $ordens,
             'sucursal' => $sucursalId,
+            'direccion' => Sucursal::find($sucursalId)->direccion,
             'categorias' => $categorias,
             'itemsporcat' => $itemsporcat,
             'tableroAdmin' => [
