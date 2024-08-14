@@ -287,7 +287,7 @@ const enviarPedido = () => {
         console.log(pedido);
     })
     .catch(function (error) {
-        asd.value = error;
+        console.log(pedido);
         console.log(error);
     });
 
