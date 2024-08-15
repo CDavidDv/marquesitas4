@@ -111,12 +111,18 @@ class DashboardController extends Controller
                 ];
             });
 
+            if($sucursalId != 0){
+                $direccion = Sucursal::find($sucursalId)->direccion;
+            }else{
+                $direccion = "Admin";
+            }
+
         return Inertia::render('Dashboard', [
             'bebidas' => $bebidas,
             'ingredientes' => $ingredientes,
             'ordens' => $ordens,
             'sucursal' => $sucursalId,
-            'direccion' => Sucursal::find($sucursalId)->direccion,
+            'direccion' => $direccion,
             'categorias' => $categorias,
             'itemsporcat' => $itemsporcat,
             'tableroAdmin' => [
