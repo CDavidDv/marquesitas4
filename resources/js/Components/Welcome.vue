@@ -59,12 +59,11 @@ const findCategoriaNombre = (itemId) => {
         <div class=" lg:px-4  border-gray-200 ">
             <div v-if="ordens.length > 0" class="bg-white shadow-lg text-gray-500 leading-relaxed border p-8 rounded-3xl">                <!-- Primer pedido -->
                 <div class="flex flex-col">
-                    <div class="flex w-full justify-between items-center mb-2">
-                        
+                    <div class="flex flex-col sm:flex-row w-full justify-between items-center mb-2">
                         <p class="text-xl font-bold text-gray-700">Pedido de {{ ordens[0].nombre_comprador }}</p>
                         <p class="text-xl font-semibold text-gray-900">Estado: {{ ordens[0].estado }}</p>
                     </div>
-                    <div class="grid grid-cols-12 gap-5 ">
+                    <div class="grid  md:grid-cols-12 gap-5 ">
 
                     
                         <!-- Marquesitas -->
@@ -72,7 +71,7 @@ const findCategoriaNombre = (itemId) => {
                         <div class="col-span-6">
                             <div v-if="ordens[0].marquesitas.length > 0" class="mb-4">
                                 <h4 class="text-md font-medium">Marquesitas</h4>
-                                <ul class="w-full mt-2 grid grid-cols-12 gap-3">
+                                <ul class="w-full mt-2 grid  sm:grid-cols-12 gap-3">
                                     <li v-for="(marquesita, index) in ordens[0].marquesitas" :key="marquesita.id" class=" col-span-6">
                                         <div class="flex justify-between w-full bg-gray-100 p-2 rounded-md">
                                             <p class=" font-semibold">Marquesita {{ index + 1 }}</p>
@@ -112,10 +111,10 @@ const findCategoriaNombre = (itemId) => {
                         <div class="col-span-6">
                             <div v-if="ordens[0].bebidas.length > 0" class="mb-4">
                                 <h4 class="text-md font-medium">Bebidas</h4>
-                                <ul class="w-full mt-2 grid grid-cols-12 gap-3">
+                                <ul class="w-full mt-2 grid sm:grid-cols-12 gap-3">
                                     <li v-for="bebida in ordens[0].bebidas" :key="bebida.id" class="mb-2 bg-gray-50 p-2 rounded-md col-span-6">
                                         <div class="flex justify-between">
-                                            <p class="text-sm">{{ bebida.nombre }}</p>
+                                            <p class="font-semibold">{{ bebida.nombre }}</p>
                                             <p class=" font-bold">Suma: ${{ bebida.precio * bebida.cantidad }}</p>
                                         </div>
                                         <div class="flex justify-between pl-5">
