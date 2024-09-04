@@ -8,12 +8,16 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
 use App\Models\Bebida;
 use App\Models\BebidasInventario;
+use App\Models\Catego;
 use App\Models\Categoria;
 use App\Models\Ingrediente;
 use App\Models\Inventario;
+use App\Models\Inventarios;
 use App\Models\InventariosOtro;
 use App\Models\Item;
+use App\Models\Itemsinventarios;
 use App\Models\Orden;
+use App\Models\PrecioMarquesita;
 use App\Models\Sucursal;
 use Carbon\Carbon;
 use Inertia\Response;
@@ -117,7 +121,10 @@ class DashboardController extends Controller
                 $direccion = "Admin";
             }
 
+        $preciomarquesita = PrecioMarquesita::all();
+        
         return Inertia::render('Dashboard', [
+            'preciomarquesita' => $preciomarquesita,
             'bebidas' => $bebidas,
             'ingredientes' => $ingredientes,
             'ordens' => $ordens,
@@ -211,12 +218,12 @@ class DashboardController extends Controller
 
         $ingredientes = Ingrediente::all();
         $bebidas = BebidasInventario::all();
-        $categorias = Categoria::with('items')->get();
-        $items = Item::all();
+        $categorias = Catego::with('items')->get();
+        $items = Itemsinventarios::all();
         $itemsporcat = $items->groupBy('categoria_id');
 
-        $inventariosOtros = InventariosOtro::where('sucursal_id', $sucursalId)->get();
-        $inventario = Inventario::where('sucursal_id', $sucursalId)->get();
+        $inventariosOtros = Inventarios::where('sucursal_id', $sucursalId)->get();
+        $inventario = Inventarios::where('sucursal_id', $sucursalId)->get();
 
         // Mapear los datos de inventario para cada ingrediente
         $ingredientesInventario = $ingredientes->map(function($ingrediente) use ($inventario) {

@@ -32,8 +32,6 @@ const errorNuevoCategoria = ref('');
 
 const errorNuevoItemCat = ref({})
 
-
-
 const form = reactive({
   sucursal_id: sucursal.value,
   ingredientes: ingredientes.value?.map(i => ({
@@ -77,7 +75,7 @@ const form = reactive({
 
 const submit = () => {
   console.log('Datos enviados:', form);  // Depuración
-  router.post('/inventario', form, {
+  router.post('/inventarioi', form, {
     onSuccess: () => {
       console.log('Inventario actualizado con éxito');
     },
@@ -87,145 +85,6 @@ const submit = () => {
   });
 };
 
-const agregarIngrediente = () => {
-  const nombreInput = document.getElementById('nombre');
-  const nombre = nombreInput ? nombreInput.value.trim() : '';
-
-  const precioInput = document.getElementById('precio');
-  const precio = precioInput ? precioInput.value.trim() : '';
-
-  if (!nombre || !precio) {
-    errorNuevoIngrediente.value = 'Nombre y precio son requeridos'
-    return;
-  }
-
-  const nuevoIngrediente = { nombre: nombre, precio: parseFloat(precio), cantidad: 0 };
-
-  router.post('/ingredientes', {
-    nombre: nombre,
-    precio: parseFloat(precio)
-  }, {
-    onSuccess: (response) => {
-      console.log('Ingrediente agregado con éxito');
-      nombreInput.value = '';
-      precioInput.value = '';
-      const lastIngrediente = response.props.ingredientes[response.props.ingredientes.length - 1];
-
-      // Crear el array actualizado combinando los datos existentes con el nuevo ítem
-      form.ingredientes = [
-        ...form.ingredientes,  // Mantener los datos existentes
-        {
-          ...lastIngrediente
-        }
-      ];
-    },
-    onError: (errors) => {
-      console.error('Error al agregar el ingrediente:', errors);
-    }
-  });
-};
-
-const agregarBebida = () => {
-  const nombreInput = document.getElementById('nombreB');
-  const nombre = nombreInput ? nombreInput.value.trim() : '';
-  const precioInput = document.getElementById('precioB');
-  const precio = precioInput ? precioInput.value.trim() : '';
-
-  if (!nombre || !precio) {
-    errorNuevoBebida.value = 'Nombre y precio son requeridos';
-    return;
-  }
-
-  router.post('/bebidas', {
-    nombre: nombre, precio: parseFloat(precio), cantidad: 0
-  }, {
-    onSuccess: (response) => {
-      nombreInput.value = '';
-      precioInput.value = '';
-
-      const lastBebida = response.props.bebidas[response.props.bebidas.length - 1];
-      form.bebidas = [
-        ...form.bebidas,
-        { ...lastBebida }
-      ];
-    },
-    onError: (errors) => {
-      console.error('Error al agregar la bebida:', errors);
-    }
-  });
-};
-
-
-const editarIngrediente = (id) => {
-  const ingrediente = form.ingredientes.find(i => i.id === id);
-  if (ingrediente) {
-    if (!ingrediente.nombre || ingrediente.nombre.trim() === '') {
-      console.log(ingrediente.nombre)
-      error.value = 'El nombre está vacío o solo contiene espacios';
-      return;
-    }
-    if (!ingrediente.precio || isNaN(ingrediente.precio) || Number(ingrediente.precio.value) === 0) {
-      error.value = 'El precio está vacío, no es válido o es 0';
-      return;
-    }
-
-    router.put(`/ingredientes/${id}`, ingrediente, {
-      onSuccess: () => {
-        console.log('Ingrediente actualizado con éxito');
-      },
-      onError: (errors) => {
-        console.error('Error al actualizar el ingrediente:', errors);
-      }
-    });
-  }
-};
-
-const editarBebida = (id) => {
-  const bebida = form.bebidas.find(b => b.id === id);
-  if (bebida) {
-    if (!bebida.nombre || bebida.nombre.trim() == '') {
-      console.log(bebida.nombre)
-      error.value = 'El nombre está vacío o solo contiene espacios';
-      return;
-    }
-    if (!bebida.precio || isNaN(bebida.precio) || Number(bebida.precio.value) == 0) {
-      error.value = 'El precio está vacío, no es válido o es 0';
-      return;
-    }
-    router.put(`/bebidas/${id}`, bebida, {
-      onSuccess: () => {
-        console.log('Bebida actualizada con éxito');
-      },
-      onError: (errors) => {
-        console.error('Error al actualizar la bebida:', errors);
-      }
-    });
-  }
-};
-
-const eliminarIngrediente = (id) => {
-  router.delete(`/ingredientes/${id}`, {
-    onSuccess: () => {
-      form.ingredientes = form.ingredientes.filter(i => i.id !== id);
-      console.log('Ingrediente eliminado con éxito');
-    },
-    onError: (errors) => {
-      console.error('Error al eliminar el ingrediente:', errors);
-    }
-  });
-};
-
-const eliminarBebida = (id) => {
-  router.delete(`/bebidas/${id}`, {
-    onSuccess: () => {
-      form.bebidas = form.bebidas.filter(b => b.id !== id);
-      console.log('Bebida eliminada con éxito');
-    },
-    onError: (errors) => {
-      console.error('Error al eliminar la bebida:', errors);
-    }
-  });
-};
 
 const agregarItem = (categoriaId) => {
   const categoria = form.categorias.find(c => c.id === categoriaId);
@@ -237,7 +96,7 @@ const agregarItem = (categoriaId) => {
       return;
     }
 
-    router.post('/items', {
+    router.post('/itemsi', {
       categoria_id: categoriaId,
       nombre,
       precio
@@ -272,7 +131,7 @@ const agregarItem = (categoriaId) => {
 
 
 const eliminarItem = (categoriaId, itemId) => {
-  router.delete(`/items/${itemId}`, {
+  router.delete(`/itemsi/${itemId}`, {
     onSuccess: (response) => {
       // Actualizar el estado de las categorías eliminando el ítem
       form.categorias = form.categorias.map(categoria => {
@@ -318,7 +177,7 @@ const editarItem = (categoriaId, itemId) => {
     }
 
     // Enviar solicitud PUT para actualizar el ítem
-    router.put(`/items/${itemId}`, item, {
+    router.put(`/itemsi/${itemId}`, item, {
       onSuccess: (response) => {
         console.log('Item actualizado con éxito');
 
@@ -354,7 +213,7 @@ const handleAddNewCategory = () => {
   const categoria = { nombre: nuevaCategoria.value.trim() };
 
   // Enviar solicitud POST para agregar una nueva categoría
-  router.post('/categorias', categoria, {
+  router.post('/categoriasi', categoria, {
     onSuccess: (response) => {
       console.log('Categoría agregada con éxito');
 
@@ -392,8 +251,7 @@ const handleAddNewCategory = () => {
         <div class="overflow-hidden sm:rounded-lg">
           <div class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
             <form @submit.prevent="submit">
-             
-              <!--CATEGORIAS-->
+              <!--INVENTARIO ADMINISTRACION-->
               <div v-if="categorias">
                 <div v-for="categoria in form.categorias" :key="categoria.id" class="mb-4">
                   <h2 class="text-xl font-bold">{{ categoria.nombre }}</h2>

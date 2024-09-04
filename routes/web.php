@@ -2,13 +2,16 @@
 
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\BebidaController;
-
+use App\Http\Controllers\CategoController;
 use App\Http\Controllers\IngredienteController;
 use App\Http\Controllers\InventarioController;
 use App\Http\Controllers\OrdenController;
 
 use App\Http\Controllers\CategoriasController;
+use App\Http\Controllers\InventariosController;
 use App\Http\Controllers\ItemsController;
+use App\Http\Controllers\ItemsinventariosController;
+use App\Http\Controllers\PrecioMarquesitaController;
 use App\Http\Controllers\SucursalController;
 use Illuminate\Support\Facades\Route;
 
@@ -48,6 +51,7 @@ Route::middleware([
 
     Route::put('/inventario/{id}', [InventarioController::class, 'update']);
     
+    Route::put('/precioMarquesita', [PrecioMarquesitaController::class, 'update']);
     
     Route::post('/ingredientes', [IngredienteController::class, 'agregarIngrediente'])->name('ingredientes.agregar');
     Route::put('/ingredientes/{id}', [IngredienteController::class, 'editarIngrediente'])->name('ingredientes.editar');
@@ -62,6 +66,12 @@ Route::middleware([
     Route::put('/items/{id}', [ItemsController::class, 'update']);
     Route::delete('/items/{id}', [ItemsController::class, 'destroy']);
     
+    Route::delete('/itemsi/{id}', [ItemsinventariosController::class, 'destroy']);
+    Route::put('/itemsi/{id}', [ItemsinventariosController::class, 'update']);
+    Route::post('/itemsi', [ItemsinventariosController::class, 'store']);
+
+    Route::post('/inventarioi', [InventariosController::class, 'store']);
+    Route::post('/categoriasi', [CategoController::class, 'store']);
 });
 
 

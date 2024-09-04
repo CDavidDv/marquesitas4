@@ -9,6 +9,7 @@ use App\Models\Ingrediente;
 use App\Models\Inventario;
 use App\Models\InventariosOtro;
 use App\Models\Item;
+use App\Models\PrecioMarquesita;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -222,7 +223,11 @@ class IngredienteController extends Controller
             ];
         });
 
+        $preciomarquesita = PrecioMarquesita::all();
+
+
         return Inertia::render('IngrediBebidas', [
+            'preciomarquesita' => $preciomarquesita,
             'ingredientesInventario' => $ingredientesInventario,
             'bebidasInventario' => $bebidasInventario,
             'otrosInventario' => $otrosInventario,

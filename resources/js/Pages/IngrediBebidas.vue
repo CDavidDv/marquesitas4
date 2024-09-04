@@ -12,6 +12,7 @@ const bebidasInventario = ref(props.bebidasInventario || []);
 const sucursal = ref(props.sucursal || '');
 const error = ref('');
 const errorNuevoBebida = ref('');
+const erroractualizarPrecioMarquesita = ref('');
 const errorNuevoIngrediente = ref('');
 
 const nuevoItem = reactive([]);
@@ -118,6 +119,31 @@ const agregarIngrediente = () => {
           ...lastIngrediente
         }
       ];
+    },
+    onError: (errors) => {
+      console.error('Error al agregar el ingrediente:', errors);
+    }
+  });
+};
+
+const actualizarPrecioMarquesita = () => {
+  const precioInput = document.getElementById('precioMarquesita');
+  const precio = precioInput ? precioInput.value.trim() : '';
+
+  if (!precio) {
+    erroractualizarPrecioMarquesita.value = 'Precio es requerido'
+    return;
+  }
+
+  const nuevoPrecioIngrediente = { precio: parseFloat(precio)};
+
+  router.put('/precioMarquesita', {
+    precio: parseFloat(precio)
+  }, {
+    onSuccess: (response) => {
+      precioInput.value = response.props.preciomarquesita[0].precio
+      console.log(response.props.preciomarquesita[0].precio)
+      console.log('Ingrediente agregado con éxito');
     },
     onError: (errors) => {
       console.error('Error al agregar el ingrediente:', errors);
@@ -391,7 +417,7 @@ const handleAddNewCategory = () => {
     <template #header>
       <div class="flex justify-between flex-col md:flex-row">
         <div>
-          <h1 class="text-xl font-bold">Inventario - Sucursal {{ sucursal }}</h1>
+          <h1 class="text-xl font-bold">Ingredientes - Sucursal {{ sucursal }}</h1>
         </div>
       </div>
     </template>
@@ -401,6 +427,31 @@ const handleAddNewCategory = () => {
         <div class="overflow-hidden sm:rounded-lg">
           <div class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
             <form @submit.prevent="submit">
+              <!--PRECIO MARQUESITA-->
+              <div class="mb-4">
+                <div class="flex flex-col md:flex-row gap-2">
+                  <h2 class="text-xl font-bold mb-4">Marquesita</h2>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-5 gap-4">                  
+                  <div v-if="$page.props.auth.user.sucursal_id == 0"
+                    class="bg-white shadow rounded border border-gray-300 p-4 items-center flex ">
+                    <label class="block w-full">
+                      <span class="font-medium text-gray-500">Precio base</span>
+                      <input id="precioMarquesita" type="number" 
+                        class="mt-1 block w-full border border-gray-300 rounded p-2 text-end" min="0" step="0.10" :value="props.preciomarquesita[0].precio"/>
+                      <div class="flex justify-center w-full items-center">
+                        <div class="flex flex-col gap-1 mt-2">
+                          <span @click="actualizarPrecioMarquesita"
+                            class="text-center text-xs px-4 py-2 bg-green-500 hover:bg-green-600 text-white font-bold rounded-lg cursor-pointer">Actualizar</span>
+                          <div v-if="erroractualizarPrecioMarquesita" class="text-red-500  mt-2">{{ erroractualizarPrecioMarquesita }}</div>
+                        </div>
+                      </div>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <!--INGREDIENTES-->
               <div class="mb-4">
                 <div class="flex flex-col md:flex-row gap-2">
                   <h2 class="text-xl font-bold mb-4">Ingredientes</h2>
@@ -462,6 +513,7 @@ const handleAddNewCategory = () => {
                 </div>
               </div>
 
+              <!--BEBIDAS-->
               <div class="mb-4">
                 <h2 class="text-xl font-bold">Bebidas</h2>
                 <div class="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-5 gap-4">
@@ -520,6 +572,87 @@ const handleAddNewCategory = () => {
                   </div>
                 </div>
               </div>
+
+              <!--CATEGORIAS-->
+              <div v-if="categorias">
+                <div v-for="categoria in form.categorias" :key="categoria.id" class="mb-4">
+                  <h2 class="text-xl font-bold">{{ categoria.nombre }}</h2>
+                  <div v-if="categoria.items" class="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-5 gap-4">
+                    <div v-for="item in categoria.items" :key="item.id"
+                      class="bg-white shadow rounded border border-gray-300 p-4">
+
+                      <label class="block overflow-hidden">
+                        <div class="flex justify-between items-center lg:flex-row flex-col">
+                          <span  class="font-medium">Cantidad de {{
+            item.cantidad
+          }}:</span>
+                          <span  class="font-medium">Nombre:</span>
+                        </div>
+
+                        
+                        <div>
+                          <input type="text" v-model.trim="item.nombre"
+                          class="mt-1 block w-full border rounded p-2 border-gray-300" />
+                          <div class="flex items-center">
+                            <p class="px-2">$</p>
+                            <input type="number" v-model.number="item.precio" :min="0"
+                            class="mt-1 block w-full border rounded p-2 border-gray-300" />
+                            <input  type="number" v-model.number="item.cantidad"
+                            class="mt-1 block w-full border rounded p-2" :min="0" step="0.10" />
+                          </div>
+                        </div>
+                        <div v-if="$page.props.auth.user.sucursal_id == 0"
+                          class="flex flex-col gap-1 mt-2 justify-center items-center">
+                          <span @click="editarItem(categoria.id, item.id)"
+                            class="text-center w-fit text-xs px-10 py-2 bg-blue-500 hover:bg-blue-600 text-white font-bold rounded-lg cursor-pointer">Actualizar</span>
+                          <span @click="eliminarItem(categoria.id, item.id)"
+                            class="text-center w-fit text-xs px-11 py-2 bg-red-500 hover:bg-red-600 text-white font-bold rounded-lg cursor-pointer">Eliminar</span>
+                        </div>
+                        <div v-if="errorNuevoItem[categoria.id]" class="text-red-500 mt-2">{{
+            errorNuevoItem[categoria.id]
+          }}</div>
+                      </label>
+                    </div>
+                    <div v-if="$page.props.auth.user.sucursal_id == 0"
+                      class="bg-white shadow border border-gray-300 rounded p-4 items-center flex">
+                      <label class="block h-full">
+                        <div class="flex justify-between w-full items-center">
+                          <span class="font-medium text-gray-500">Nuevo item</span>
+
+                        </div>
+                        <input type="text" placeholder="Nombre del item"
+                          class="mt-1 block w-full border border-gray-300 rounded p-2"
+                          v-model.trim="nuevoItem[categoria.id].nombre" />
+                        <input type="number" placeholder="$0.0"
+                          class="mt-1 block w-full border border-gray-300 rounded p-2"
+                          v-model.number="nuevoItem[categoria.id].precio" step="0.10" />
+                        <input type="number" placeholder="0.0"
+                        class="mt-1 block w-full border border-gray-300 rounded p-2"
+                        v-model.number="nuevoItem[categoria.id].cantidad" step="0.10" />
+                        <div class="flex justify-center items-center w-full mt-2">
+                          <span @click="agregarItem(categoria.id)"
+                            class="text-center text-xs px-10 py-2 bg-green-500 hover:bg-green-600 text-white font-bold rounded-lg cursor-pointer">Agregar</span>
+                        </div>
+                        <div v-if="errorNuevoItemCat[categoria.id]" class="text-red-500 mt-2">{{
+            errorNuevoItemCat[categoria.id] }}</div>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+
+              <div v-if="$page.props.auth.user.sucursal_id === 0"
+                class="py-4 my-8 border-t-2 flex flex-col w-fit gap-2">
+                <label for="categoria">Nueva categoria:</label>
+                <input v-model.trim="nuevaCategoria" type="text" class="rounded-lg" placeholder="Nombre">
+                <span @click.prevent="handleAddNewCategory"
+                  class="bg-blue-500 hover:bg-blue-600 cursor-pointer text-white px-4 py-2 rounded-xl text-center">
+                  Agregar
+                </span>
+                <div v-if="errorNuevoCategoria" class="text-red-500  text-center">{{ errorNuevoCategoria }}</div>
+              </div>
+
               <!--CATEGORIAS-->
               <div v-if="$page.props.auth.user.sucursal_id > 0" class="w-full flex justify-end">
                 <button type="submit" class="py-2 px-3 rounded-lg bg-orange-500 text-white font-bold">Actualizar

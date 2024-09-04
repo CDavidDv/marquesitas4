@@ -3,6 +3,8 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+
+use App\Models\Marquesita;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -13,6 +15,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
+            MarquesitaSeeder::class,
             BebidasInventarioSeeder::class,
             IngredienteSeeder::class, 
             SucursalSeeder::class,
@@ -22,3 +25,4 @@ class DatabaseSeeder extends Seeder
         
     }
 }
+
