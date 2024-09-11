@@ -21,6 +21,10 @@ const props = defineProps({
         type: Object ,
         required: true
     },
+    precio: {
+        type: Object,
+        required: true
+    }
 })
 
 const error = ref(null);
@@ -98,7 +102,7 @@ const findCategoriaNombre = (itemId) => {
                                                 <p class="text-sm">Cantidad: {{ marquesita.cantidad }} </p>
                                                 <p class="text-sm ">Individual: ${{ marquesita.precio_marquesita }}</p>
                                             </div>
-                                            <p class="text-sm font-semibold ">Simples - $40.0</p>
+                                            <p class="text-sm font-semibold ">Simples - ${{props.precio[0].precio}}</p>
                                         </div>
                                     </li>
                                 </ul>
@@ -209,7 +213,7 @@ const findCategoriaNombre = (itemId) => {
                                                     <p class="text-sm">Cantidad: {{ marquesita.cantidad }} </p>
                                                     <p class="font-sm">Individual: ${{ marquesita.precio_marquesita }}</p>
                                                 </div>
-                                                <p class="text-sm font-semibold ">Simples - $40.0</p>
+                                                <p class="text-sm font-semibold ">Simples - ${{props.precio[0].precio}}</p>
                                             </div>
                                         </li>
                                     </ul>
@@ -268,7 +272,7 @@ const findCategoriaNombre = (itemId) => {
             </div>
             
             <div class=" border p-3 bg-white md:w-8/12 lg:w-8/12 col-span-7 rounded-3xl shadow-xl">
-                <CrearPedido :bebidas="bebidas" :ingredientes="ingredientes" :categorias="categorias" />
+                <CrearPedido :bebidas="bebidas" :ingredientes="ingredientes" :categorias="categorias" :precio="precio" />
             </div>
         </div>
     </div>

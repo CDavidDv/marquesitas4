@@ -7,6 +7,10 @@ import { usePage } from '@inertiajs/vue3';
 const { props } = usePage();
 
 defineProps({
+  preciomarquesita:{
+    type: Object,
+    required: true
+  },
   bebidas: {
     type: Object,
     required: true
@@ -49,7 +53,7 @@ defineProps({
         <div class="py-1 sm:py-4">
             <div class="max-w mx-auto sm:px-6 lg:px-8">
                 <div class=" overflow-hidden  sm:rounded-lg">
-                    <Welcome v-if="$page.props.auth.user.sucursal_id > 0 " :bebidas="bebidas" :ingredientes="ingredientes" :ordens="ordens" :categorias="categorias" />
+                    <Welcome v-if="$page.props.auth.user.sucursal_id > 0 " :bebidas="bebidas" :ingredientes="ingredientes" :ordens="ordens" :categorias="categorias" :precio="preciomarquesita" />
                     <Tablero v-else :tableroAdmin="tableroAdmin" />
                 </div>
             </div>

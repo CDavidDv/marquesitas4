@@ -14,8 +14,14 @@ const props = defineProps({
     categorias: {
         type: Object,
         required: true,
+    },
+    precio: {
+        type: Object,
+        required: true
     }
 });
+
+console.log(props.precio[0].precio)
 
 const marquesitas = ref([]);
 const bebidasSelection = ref([]);
@@ -24,7 +30,7 @@ const sumaTotal = ref(0.0);
 const error = ref(null);
 const asd = ref(null);
 const selection = ref([]);
-const sumaIndividual = ref(40.0);
+const sumaIndividual = ref(props.precio[0].precio);
 const metodoPago = ref('Efectivo');
 const nombreComprador = ref('');
 const searchQueryIngredients = ref('');
@@ -102,7 +108,7 @@ const handleAddToSelectionMarquesa = () => {
 
     sumaTotal.value += sumaIndividual.value;
     selection.value = [];
-    sumaIndividual.value = 40.0;
+    sumaIndividual.value = props.precio[0].precio;
 };
 
 
@@ -300,7 +306,7 @@ const enviarPedido = () => {
             sumaTotal.value = 0.0;
             error.value = null;
             selection.value = [];
-            sumaIndividual.value = 40.0;
+            sumaIndividual.value = props.precio[0].precio;
             metodoPago.value = 'Efectivo';
             nombreComprador.value = '';
             pago.value = 0;

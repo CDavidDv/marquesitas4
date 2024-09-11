@@ -46,6 +46,7 @@ class DashboardController extends Controller
         $categorias = Categoria::with('items')->get();
         $itemsporcat = Item::all();
         
+        
         $ordens = Orden::where('sucursal_id', $sucursalId)
             ->whereNotIn('estado',['Entregado', 'Cancelado'])
             ->with(['marquesitas.ingredientes', 'bebidas', 'ordenItems'])
